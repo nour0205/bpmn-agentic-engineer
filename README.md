@@ -272,7 +272,7 @@ tests/             unit, regression, orchestration, and integration tests
 docs/              architecture decisions
 ```
 
-The root also retains milestone patch bundles and setup notes as development history. Runtime behavior is defined by the root `src/` package and tested by the root `tests/` suite.
+Runtime behavior is defined by the root `src/` package and tested by the root `tests/` suite.
 
 ## Validation and testing
 
