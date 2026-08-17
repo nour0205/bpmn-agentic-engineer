@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BPMN Agentic Engineer
 
 Foundation for a **natural-language BPMN engineering agent**.
@@ -127,3 +128,7 @@ python -m unittest discover -s tests
 3. Add fixtures for gateways, loops, subprocesses and lanes.
 4. Define the structured `ChangeRequest` and `ModificationPlan` schemas.
 5. Only then add write-capable atomic BPMN tools.
+=======
+# bpmn-agentic-engineer
+Agentic AI system for natural-language BPMN analysis and safe process transformation.
+>>>>>>> e9e0b2de0a375a79ddde184c689bb45a93d1dbb2
