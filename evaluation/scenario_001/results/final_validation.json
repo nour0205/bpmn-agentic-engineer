@@ -1,0 +1,27 @@
+﻿{
+  "file": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_001\\generated_clean\\clean_scenario_001_final.bpmn",
+  "valid_for_agentic_editing": true,
+  "error_count": 0,
+  "warning_count": 1,
+  "info_count": 1,
+  "issues": [
+    {
+      "code": "EXPLICIT_END_WITH_IMPLICIT_START",
+      "severity": "warning",
+      "message": "Process 'Id_e6326128-4d51-4eee-b38c-c74471effa51' has an explicit end event but uses an implicit process entry.",
+      "element_ids": [
+        "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "Id_877bbcb9-ada6-4a5f-85af-572482d231fc"
+      ]
+    },
+    {
+      "code": "EMPTY_PROCESS_CONTAINER",
+      "severity": "info",
+      "message": "Process 'Id_7642f5d0-e68f-4f12-9a9a-4687484e9444' is an empty pool/container.",
+      "element_ids": [
+        "Id_7642f5d0-e68f-4f12-9a9a-4687484e9444"
+      ]
+    }
+  ],
+  "scope_note": "Basic structural validation only; full BPMN XSD and execution semantics will be added in a later milestone."
+}

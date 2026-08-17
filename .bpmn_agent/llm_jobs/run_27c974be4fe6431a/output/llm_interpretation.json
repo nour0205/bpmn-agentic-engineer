@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "insert_task_after",
+  "target_query": "Créer un dossier d'appel d'offres et renseigner son numéro",
+  "source_queries": [],
+  "new_name": "Valider le dossier d'appel d'offres",
+  "new_bpmn_type": "userTask",
+  "lane_name": "SPCM",
+  "process_alias": "process_2",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

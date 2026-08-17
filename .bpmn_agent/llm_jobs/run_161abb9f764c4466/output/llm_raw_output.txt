@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "replace_linear_task_sequence",
+  "target_query": null,
+  "source_queries": ["Renseigner les réponses financières au niveau du SI par modèle d'import", "Générer un tableau comparatif des offres directement au niveau du SI"],
+  "new_name": "Intégrer automatiquement les réponses financières et générer le tableau comparatif des offres",
+  "new_bpmn_type": "serviceTask",
+  "lane_name": "Direction d'Approvisionnement",
+  "process_alias": "process_2",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

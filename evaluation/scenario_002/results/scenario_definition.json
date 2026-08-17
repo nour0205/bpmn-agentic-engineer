@@ -1,0 +1,29 @@
+{
+  "scenario_id": "scenario_002",
+  "reference_file": "evaluation/scenario_002/reference/cible.bpmn",
+  "input_file": "evaluation/scenario_002/input/as_is.bpmn",
+  "selected_process": "Suivi des commandes",
+  "changes": [
+    {
+      "step": 1,
+      "operation": "rename_element",
+      "as_is_state": "La tâche utilisateur est nommée « Archiver la lettre de relance sans la transmettre au Fournisseur ».",
+      "expected_reference_state": "La même tâche utilisateur est nommée « Transmettre la lettre de relance au Fournisseur via le portail et par mail » dans la lane Direction d'Approvisionnement.",
+      "natural_language_instruction": "Renommez l'activité « Archiver la lettre de relance sans la transmettre au Fournisseur » en « Transmettre la lettre de relance au Fournisseur via le portail et par mail »."
+    },
+    {
+      "step": 2,
+      "operation": "insert_task_after",
+      "as_is_state": "La tâche « Générer les lettres de relance » mène directement à la passerelle « Validation ? ».",
+      "expected_reference_state": "Une tâche utilisateur « Valider la lettre de relance » est placée après « Générer les lettres de relance », dans la lane Direction Générale, avant la passerelle « Validation ? ».",
+      "natural_language_instruction": "Après l'activité « Générer les lettres de relance », ajoutez une tâche utilisateur nommée « Valider la lettre de relance » dans la lane « Direction Générale »."
+    },
+    {
+      "step": 3,
+      "operation": "remove_element",
+      "as_is_state": "La tâche artificielle « Saisir manuellement la nouvelle date dans un tableau de suivi » se trouve entre la communication de la nouvelle date et la mise à jour du planning.",
+      "expected_reference_state": "L'événement « Communication d'une nouvelle date de réception de la part du Fournisseur sur le portail » mène directement à « Mettre à jour le planning de livraisons prévues ».",
+      "natural_language_instruction": "Supprimez l'activité redondante « Saisir manuellement la nouvelle date dans un tableau de suivi » et reconnectez directement son prédécesseur à son successeur."
+    }
+  ]
+}

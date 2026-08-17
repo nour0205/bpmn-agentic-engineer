@@ -1,0 +1,13 @@
+{
+  "run_id": "run_afc420c2e7e443b3",
+  "kernel_ref": "nourkouider05/bpmn-qwen3-interpreter",
+  "accelerator": "NvidiaTeslaT4",
+  "request_sha256": "9a826bcc92837a7cce16b7b9996eba8577034a35e297a5dad58750103b90e102",
+  "submitted_at": "2026-08-10T10:35:19.093476+00:00",
+  "job_dir": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_002\\.state\\llm_jobs\\run_afc420c2e7e443b3",
+  "kernel_dir": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_002\\.state\\llm_jobs\\run_afc420c2e7e443b3\\kernel",
+  "output_dir": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_002\\.state\\llm_jobs\\run_afc420c2e7e443b3\\output",
+  "process_alias_to_id": {
+    "process_1": "Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da"
+  }
+}

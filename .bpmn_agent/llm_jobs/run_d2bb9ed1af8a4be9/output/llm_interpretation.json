@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "remove_element",
+  "target_query": "Scanner le contrat et l'insérer en tant que pièce jointe sur le SI",
+  "source_queries": [],
+  "new_name": null,
+  "new_bpmn_type": null,
+  "lane_name": "Direction d'Approvisionnement",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

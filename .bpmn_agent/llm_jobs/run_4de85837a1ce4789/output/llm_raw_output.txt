@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "insert_task_before",
+  "target_query": "Choisir la simulation (solution) optimale",
+  "source_queries": [],
+  "new_name": "Effectuer une analyse financiére des simulations",
+  "new_bpmn_type": "userTask",
+  "lane_name": "Direction Financiére",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

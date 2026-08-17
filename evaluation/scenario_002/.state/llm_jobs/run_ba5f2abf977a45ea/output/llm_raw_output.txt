@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "rename_element",
+  "target_query": "Archiver la lettre de relance sans la transmettre au Fournisseur",
+  "source_queries": [],
+  "new_name": "Transmettre la lettre de relance au Fournisseur via le portail et par mail",
+  "new_bpmn_type": null,
+  "lane_name": "Direction d'Approvisionnement",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 1.0
+}

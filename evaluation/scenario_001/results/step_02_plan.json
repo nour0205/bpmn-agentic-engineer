@@ -1,0 +1,161 @@
+{
+  "file": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_001\\generated\\step_01_merged.bpmn",
+  "request": {
+    "request_text": "Ajoute l'activité « Effectuer une analyse financiére des simulations » avant « Choisir la simulation (solution) optimale », dans le couloir Direction Financiére.",
+    "operation": "insert_task_before",
+    "position": "before",
+    "target_query": "Choisir la simulation (solution) optimale",
+    "target_element_id": null,
+    "target_process_id": null,
+    "new_name": "Effectuer une analyse financiére des simulations",
+    "target_lane_name": "Direction Financiére",
+    "source_queries": [],
+    "new_bpmn_type": "userTask"
+  },
+  "status": "ready_for_approval",
+  "requires_clarification": false,
+  "requires_approval": true,
+  "selected_target": {
+    "id": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+    "type": "userTask",
+    "name": "Choisir la simulation (solution) optimale",
+    "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+    "lane_id": "Id_d60061bf-b638-436b-aed4-eca66a875db7",
+    "lane_name": "Direction d'Approvisionnement",
+    "participant_id": "Id_7c073926-c12a-4876-9e2d-d47048e5405e",
+    "participant_name": "Détermination des besoins d’approvisionnement"
+  },
+  "candidate_matches": [
+    {
+      "id": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+      "type": "userTask",
+      "name": "Choisir la simulation (solution) optimale",
+      "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+      "participant_id": "Id_7c073926-c12a-4876-9e2d-d47048e5405e",
+      "participant_name": "Détermination des besoins d’approvisionnement",
+      "lane_id": "Id_d60061bf-b638-436b-aed4-eca66a875db7",
+      "lane_name": "Direction d'Approvisionnement",
+      "score": 25.0,
+      "exact_name_match": true
+    }
+  ],
+  "target_context": {
+    "element": {
+      "id": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+      "type": "userTask",
+      "name": "Choisir la simulation (solution) optimale",
+      "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+      "lane_id": "Id_d60061bf-b638-436b-aed4-eca66a875db7",
+      "lane_name": "Direction d'Approvisionnement"
+    },
+    "predecessors": [
+      {
+        "id": "Id_a68b689c-b9c3-40fd-8514-ab00dce202fb",
+        "type": "serviceTask",
+        "name": "Génération automatique de la couverture de stock relatif à chaque simulation (Autonomie)",
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "lane_id": "Id_d60061bf-b638-436b-aed4-eca66a875db7",
+        "lane_name": "Direction d'Approvisionnement"
+      }
+    ],
+    "successors": [
+      {
+        "id": "Id_807ac93c-18e3-4aa2-a3eb-c52312b34022",
+        "type": "userTask",
+        "name": "Générer le programme d'approvisionnement",
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "lane_id": "Id_d60061bf-b638-436b-aed4-eca66a875db7",
+        "lane_name": "Direction d'Approvisionnement"
+      }
+    ],
+    "incoming_sequence_flows": [
+      {
+        "id": "Id_bf29d218-971c-4bea-b5d0-493696269566",
+        "source_ref": "Id_a68b689c-b9c3-40fd-8514-ab00dce202fb",
+        "target_ref": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+        "name": null,
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "condition_expression": null
+      }
+    ],
+    "outgoing_sequence_flows": [
+      {
+        "id": "Id_85846e73-d177-43b7-8e48-56380dafc894",
+        "source_ref": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+        "target_ref": "Id_807ac93c-18e3-4aa2-a3eb-c52312b34022",
+        "name": null,
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "condition_expression": null
+      }
+    ]
+  },
+  "planned_operations": [
+    {
+      "id": "op_001",
+      "operation": "add_task",
+      "parameters": {
+        "new_element_id": "${new_task_id}",
+        "name": "Effectuer une analyse financiére des simulations",
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "lane_id": "Id_59d9cb36-b5d0-4619-8928-3026cb08f705",
+        "lane_name": "Direction Financiére",
+        "bpmn_type": "userTask"
+      },
+      "rationale": "Create the requested task in the target process and actor lane."
+    },
+    {
+      "id": "op_002",
+      "operation": "remove_sequence_flow",
+      "parameters": {
+        "sequence_flow_id": "Id_bf29d218-971c-4bea-b5d0-493696269566"
+      },
+      "rationale": "Temporarily detach the target from its current predecessor."
+    },
+    {
+      "id": "op_003",
+      "operation": "add_sequence_flow",
+      "parameters": {
+        "new_sequence_flow_id": "${new_flow_1_id}",
+        "source_ref": "Id_a68b689c-b9c3-40fd-8514-ab00dce202fb",
+        "target_ref": "${new_task_id}",
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+        "preserve_name": null,
+        "preserve_condition_expression": null
+      },
+      "rationale": "Connect the original predecessor to the new task."
+    },
+    {
+      "id": "op_004",
+      "operation": "add_sequence_flow",
+      "parameters": {
+        "new_sequence_flow_id": "${new_flow_2_id}",
+        "source_ref": "${new_task_id}",
+        "target_ref": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+        "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51"
+      },
+      "rationale": "Connect the new task to the original target."
+    }
+  ],
+  "acceptance_criteria": [
+    "The new task 'Effectuer une analyse financiére des simulations' is directly before 'Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91'.",
+    "The original upstream and downstream paths remain reachable.",
+    "No sequence flow references an unknown element.",
+    "All unaffected process variants remain unchanged."
+  ],
+  "risks": [],
+  "assumptions": [
+    "The new task uses the requested lane when provided; otherwise it inherits the anchor lane.",
+    "Diagram coordinates are generated in the resolved destination lane."
+  ],
+  "clarification_questions": [],
+  "baseline_validation": {
+    "valid_for_agentic_editing": true,
+    "error_count": 0,
+    "warning_count": 1,
+    "info_count": 1,
+    "blocking_issues": []
+  },
+  "planner_version": "deterministic-v2",
+  "source_sha256": "9b2e5eb102eed11b4b392ec6de22eb6f00c5258f009c46dac7a0af877458809d",
+  "plan_checksum": "001fd785b6aa87ac566609bc8a0a6adde72ba1d90401245281d0ea4d34e465d8"
+}

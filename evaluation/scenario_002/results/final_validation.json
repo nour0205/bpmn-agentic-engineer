@@ -1,0 +1,36 @@
+﻿{
+  "file": "C:\\Users\\nourk\\bpmn-agentic-engineer-starter\\evaluation\\scenario_002\\generated\\scenario_002_final.bpmn",
+  "valid_for_agentic_editing": true,
+  "error_count": 0,
+  "warning_count": 0,
+  "info_count": 3,
+  "issues": [
+    {
+      "code": "EMPTY_PROCESS_CONTAINER",
+      "severity": "info",
+      "message": "Process 'Id_f0ccd374-6b42-4037-adb8-1e855985418f' is an empty pool/container.",
+      "element_ids": [
+        "Id_f0ccd374-6b42-4037-adb8-1e855985418f"
+      ]
+    },
+    {
+      "code": "IMPLICIT_END_NODE",
+      "severity": "info",
+      "message": "Process 'Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da' uses implicit process exit node(s): Id_bd4c5750-70f3-4c43-932f-c3f6c5dd5464.",
+      "element_ids": [
+        "Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da",
+        "Id_bd4c5750-70f3-4c43-932f-c3f6c5dd5464"
+      ]
+    },
+    {
+      "code": "IMPLICIT_START_NODE",
+      "severity": "info",
+      "message": "Process 'Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da' uses implicit process entry node(s): Id_58b1320f-ddda-407f-bc96-fbc3dc30c7d0.",
+      "element_ids": [
+        "Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da",
+        "Id_58b1320f-ddda-407f-bc96-fbc3dc30c7d0"
+      ]
+    }
+  ],
+  "scope_note": "Basic structural validation only; full BPMN XSD and execution semantics will be added in a later milestone."
+}

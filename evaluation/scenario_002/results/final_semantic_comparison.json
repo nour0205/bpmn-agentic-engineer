@@ -1,0 +1,26 @@
+{
+  "comparison": "semantic_id_and_di_independent",
+  "node_identity": [
+    "bpmn_type",
+    "normalized_visible_name",
+    "normalized_lane_name"
+  ],
+  "flow_identity": [
+    "semantic_source_identity",
+    "semantic_target_identity"
+  ],
+  "reference_flow_node_count": 13,
+  "generated_flow_node_count": 13,
+  "reference_sequence_flow_count": 14,
+  "generated_sequence_flow_count": 14,
+  "missing_semantic_nodes": [],
+  "extra_semantic_nodes": [],
+  "wrong_bpmn_types": [],
+  "wrong_lane_assignments": [],
+  "missing_semantic_flows": [],
+  "extra_semantic_flows": [],
+  "semantic_node_match_percentage": 100.0,
+  "semantic_flow_match_percentage": 100.0,
+  "bpmn_type_accuracy": 100.0,
+  "lane_assignment_accuracy": 100.0
+}

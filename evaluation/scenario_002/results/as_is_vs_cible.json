@@ -1,0 +1,55 @@
+{
+  "scenario_id": "scenario_002",
+  "comparison": "semantic_id_independent",
+  "reference_flow_node_count": 13,
+  "as_is_flow_node_count": 13,
+  "reference_sequence_flow_count": 14,
+  "as_is_sequence_flow_count": 14,
+  "intended_differences": {
+    "renamed_elements": [
+      {
+        "bpmn_type": "userTask",
+        "lane": "Direction d'Approvisionnement",
+        "reference_name": "Transmettre la lettre de relance au Fournisseur via le portail et par mail",
+        "as_is_name": "Archiver la lettre de relance sans la transmettre au Fournisseur"
+      }
+    ],
+    "missing_reference_nodes": [
+      {
+        "bpmn_type": "userTask",
+        "name": "Valider la lettre de relance",
+        "lane": "Direction Générale"
+      }
+    ],
+    "artificial_as_is_nodes": [
+      {
+        "bpmn_type": "userTask",
+        "name": "Saisir manuellement la nouvelle date dans un tableau de suivi",
+        "lane": "Direction d'Approvisionnement"
+      }
+    ],
+    "sequence_flow_rewirings": [
+      {
+        "reason": "removed reference task",
+        "reference": "Générer les lettres de relance -> Valider la lettre de relance -> Validation ?",
+        "as_is": "Générer les lettres de relance -> Validation ?"
+      },
+      {
+        "reason": "inserted artificial task",
+        "reference": "Communication d'une nouvelle date de réception de la part du Fournisseur sur le portail -> Mettre à jour le planning de livraisons prévues",
+        "as_is": "Communication d'une nouvelle date de réception de la part du Fournisseur sur le portail -> Saisir manuellement la nouvelle date dans un tableau de suivi -> Mettre à jour le planning de livraisons prévues"
+      },
+      {
+        "reason": "renamed node changes its semantic flow identity only",
+        "reference": "Validation ? -> Transmettre la lettre de relance au Fournisseur via le portail et par mail -> Communication d'une nouvelle date de réception de la part du Fournisseur sur le portail",
+        "as_is": "Validation ? -> Archiver la lettre de relance sans la transmettre au Fournisseur -> Communication d'une nouvelle date de réception de la part du Fournisseur sur le portail"
+      }
+    ]
+  },
+  "unexplained_semantic_differences": [],
+  "reference_is_byte_identical_to_source": true,
+  "as_is_validation": {
+    "valid_for_agentic_editing": true,
+    "error_count": 0
+  }
+}

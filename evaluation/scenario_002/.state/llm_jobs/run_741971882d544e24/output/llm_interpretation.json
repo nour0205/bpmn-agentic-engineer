@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "remove_element",
+  "target_query": "Saisir manuellement la nouvelle date dans un tableau de suivi",
+  "source_queries": [],
+  "new_name": null,
+  "new_bpmn_type": null,
+  "lane_name": "Direction d'Approvisionnement",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

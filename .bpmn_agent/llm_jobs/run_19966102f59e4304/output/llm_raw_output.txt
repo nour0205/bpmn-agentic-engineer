@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "unsupported",
+  "target_query": null,
+  "source_queries": [],
+  "new_name": null,
+  "new_bpmn_type": null,
+  "lane_name": null,
+  "process_alias": null,
+  "requires_clarification": true,
+  "clarification_question": "Which process (process_1, process_2, or process_3) are you referring to?",
+  "confidence": 0.8
+}

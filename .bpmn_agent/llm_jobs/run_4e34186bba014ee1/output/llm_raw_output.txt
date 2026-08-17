@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "insert_task_after",
+  "target_query": "Recevoir le draft du contrat par le Fournisseur",
+  "source_queries": [],
+  "new_name": "Effectuer le contrôle juridique du contrat",
+  "new_bpmn_type": "userTask",
+  "lane_name": "Responsable du Département Juridique",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

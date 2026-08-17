@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.1",
+  "operation": "insert_task_after",
+  "target_query": "Générer les lettres de relance",
+  "source_queries": [],
+  "new_name": "Valider la lettre de relance",
+  "new_bpmn_type": "userTask",
+  "lane_name": "Direction Générale",
+  "process_alias": "process_1",
+  "requires_clarification": false,
+  "clarification_question": null,
+  "confidence": 0.95
+}

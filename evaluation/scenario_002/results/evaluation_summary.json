@@ -1,0 +1,18 @@
+{
+  "scenario_id": "scenario_002",
+  "clean_run": true,
+  "requested_modifications": 3,
+  "correct_llm_interpretations": 3,
+  "correct_target_groundings": 3,
+  "correct_plans": 3,
+  "successful_executions": 3,
+  "manual_interpretation_corrections": 0,
+  "manual_bpmn_corrections": 0,
+  "structural_errors": 0,
+  "semantic_node_match_percentage": 100.0,
+  "semantic_flow_match_percentage": 100.0,
+  "bpmn_type_accuracy": 100.0,
+  "lane_assignment_accuracy": 100.0,
+  "ambiguity_test_passed": true,
+  "overall_result": "PASS"
+}
