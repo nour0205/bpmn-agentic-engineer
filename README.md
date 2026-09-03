@@ -1,316 +1,226 @@
 # BPMN Agentic Engineer
 
-> A safety-first Python system for inspecting, analyzing, planning, and applying natural-language changes to BPMN 2.0 process models.
+A safety-first BPMN 2.0 agent that turns a natural-language change request into a validated BPMN file—without allowing the language model to edit XML.
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
-![BPMN](https://img.shields.io/badge/BPMN-2.0-0B5FFF)
-![Tests](https://img.shields.io/badge/tests-73%20passing-2EA44F)
-![License](https://img.shields.io/badge/license-MIT-blue)
-
-BPMN Agentic Engineer combines natural-language interpretation with a deterministic BPMN engineering core. It can inspect real BPMN XML, locate process elements, analyze graph structure, prepare reviewable modification plans, pause for human clarification or approval, apply an approved plan to a new file, and validate the result.
-
-The core principle is deliberately conservative: **AI interprets intent; trusted local code owns BPMN identifiers, graph facts, XML mutations, and validation.** The original model is never overwritten.
-
-## What it can do
-
-| Area | Current capability |
-|---|---|
-| Inspection | Summarize processes, participants, lanes, flow nodes, sequence flows, and element-type counts |
-| Search | Rank elements by visible name, ID, BPMN type, and lane, with accent-insensitive matching |
-| Graph queries | Return predecessors, successors, connecting flows, and directed paths |
-| Analysis | Detect structural and process-design signals such as cycles, gateway splits/merges, lane handoffs, duplicate labels, sequential human-task chains, dead ends, and selected lexical signals |
-| Planning | Turn English or French requests into checksummed, read-only atomic plans |
-| Editing | Insert a task before or after an anchor, rename an element, remove a simple linear element, or replace a consecutive linear task sequence |
-| Diagram preservation | Update BPMN-DI shapes and edges for supported transformations, including lane-aware and cross-lane insertion |
-| Orchestration | Persist resumable LangGraph runs with clarification, approval, execution, and validation gates |
-| Optional LLM | Use Qwen3-8B through a private Kaggle kernel for structured intent interpretation |
-| Review | Generate semantic diffs and interactive side-by-side HTML previews with changed elements highlighted |
-| Integration | Expose inspection, planning, execution, and durable agent operations through MCP tools |
-
-## How it works
-
-```mermaid
-flowchart LR
-    U[Natural-language request] --> I{Interpretation mode}
-    I -->|Deterministic parser| P[Local planner]
-    I -->|Optional Qwen3 on Kaggle| V[Strict ID-free schema validation]
-    V --> P
-    B[BPMN XML] --> D[BpmnDocument]
-    D --> G[Inspection and local grounding]
-    G --> P
-    P --> C[Checksummed modification plan]
-    C --> H{Human approval}
-    H -->|Reject| X[Cancel without output]
-    H -->|Approve exact plan| E[Atomic executor on temporary copy]
-    E --> Q[Structural validation]
-    Q -->|Pass| O[New BPMN + semantic diff]
-    Q -->|Fail| R[Rollback / repair boundary]
-```
-
-The durable agent follows this stateful sequence:
+The supported product flow is:
 
 ```text
-inspect source
-  → interpret request (optional remote Qwen3 step)
-  → plan locally
-  → clarify if ambiguous
-  → wait for explicit approval
-  → execute on a copy
-  → independently validate
-  → complete or stop at the repair boundary
+BPMN file + business request
+        ↓
+compact semantic BPMN context
+        ↓
+Qwen3-8B interpretation (Kaggle)
+        ↓
+deterministic grounding against real element/process/lane IDs
+        ↓
+clarification when ambiguous
+        ↓
+checksummed deterministic plan
+        ↓
+explicit human approval
+        ↓
+BPMN XML + sequence-flow + BPMN-DI execution on a copy
+        ↓
+independent structural validation
+        ↓
+one validated final BPMN
 ```
 
-LangGraph checkpoints are stored in `.bpmn_agent/checkpoints.sqlite`, allowing a run to stop at an interrupt and resume later by run ID.
+## Why this architecture
 
-## Safety model
+LLMs are useful for understanding business language, but they are not trusted to rewrite BPMN XML. Qwen returns a small structured interpretation. The local engine then resolves exact BPMN elements, rejects ambiguity and unsupported operations, constructs an auditable plan, and executes only that approved plan.
 
-The project treats BPMN modification as a controlled engineering operation rather than free-form XML generation.
+The source BPMN is never overwritten by default. Plans bind the source checksum to the proposed operations, and completed outputs must pass structural validation.
 
-- The source BPMN is parsed and structurally checked before planning.
-- Lane membership comes from standard `flowNodeRef` references, with BPMN-DI geometry as a fallback for exports that omit them.
-- The optional LLM receives a compact, ID-free process catalogue and is forbidden from returning BPMN element, lane, process, or sequence-flow IDs.
-- Element grounding and ambiguity handling happen locally and deterministically.
-- Every executable plan includes a SHA-256 digest of the source and a checksum of the plan itself.
-- Execution requires explicit approval of a plan whose checksum still matches.
-- A changed source file, modified plan, reused source/output path, or existing output path blocks execution.
-- Mutations are first applied to a temporary copy. The destination is committed only after structural validation succeeds.
-- Results include resolved generated IDs, validation details, and a semantic before/after diff.
+## Capabilities
 
-## Supported transformations
+The deterministic engine supports five operations:
 
-The natural-language layer currently maps requests to these bounded operations:
-
-| Operation | Example request |
+| Operation | Effect |
 |---|---|
-| Insert after | `After "Review request", add a user task named "Approve request".` |
-| Insert before | `Avant "Envoyer le contrat", ajouter une tâche "Valider le contrat".` |
-| Rename | `Rename "Review request" to "Validate request".` |
-| Remove | `Remove "Archive draft" and reconnect its predecessor to its successor.` |
-| Consolidate a linear sequence | `Merge "Enter data" and "Verify data" into "Process data" as a service task.` |
+| `insert_task_before` | Insert a task before an exact flow-node anchor |
+| `insert_task_after` | Insert a task after an exact flow-node anchor |
+| `rename_element` | Rename one grounded BPMN element |
+| `remove_element` | Remove one eligible element and reconnect its linear flow |
+| `replace_linear_task_sequence` | Replace consecutive tasks with one task |
 
-Insertion and removal are intentionally constrained by graph topology. When a target is missing, ambiguous, branched, cross-process, or otherwise unsafe for the requested operation, the planner asks for clarification or refuses to produce an executable plan.
+Insertions and replacements update lane membership, incoming/outgoing references, sequence flows, and BPMN-DI shapes/edges. A `callActivity` may be an insertion anchor. Multi-process models retain explicit process scope: destination lane selection does not silently change the target process.
+
+Unsupported or non-linear transformations fail before execution. Ambiguous labels produce candidates containing exact element, process, and lane information.
 
 ## Installation
 
-### Recommended: `uv`
+Requirements:
 
-```bash
+- Python 3.10+
+- [uv](https://docs.astral.sh/uv/)
+- Kaggle CLI credentials for real Qwen interpretation
+
+```powershell
 git clone <repository-url>
 cd bpmn-agentic-engineer-starter
-uv venv
-uv sync --extra all
+uv sync --extra dev
 ```
 
-### Standard `pip`
+The application dependencies include LangGraph, its SQLite checkpointer, and Kaggle. No browser or JavaScript runtime is required.
 
-```bash
-python -m venv .venv
+Configure Kaggle using its standard credentials. The default private kernel reference is `nourkouider05/bpmn-qwen3-interpreter`; override it with `--kaggle-kernel-ref owner/slug` or `BPMN_AGENT_KAGGLE_KERNEL`.
 
-# Windows
-.venv\Scripts\activate
+## CLI
 
-# macOS / Linux
-# source .venv/bin/activate
+### Validate
 
-python -m pip install -e ".[all]"
+```powershell
+uv run bpmn-agent validate ".\tests\fixtures\execution_process.bpmn"
 ```
 
-Python 3.10 or newer is required. The base package has no mandatory runtime dependencies beyond the standard library; optional extras add MCP, LangGraph persistence, Kaggle integration, and development tools:
+Validation checks duplicate IDs, sequence-flow endpoints, incoming/outgoing references, lane references, BPMN-DI references, and required shapes for editable flow nodes. Success reports `valid_for_agentic_editing: true` and `error_count: 0`.
 
-```bash
-pip install -e ".[mcp]"    # MCP server
-pip install -e ".[agent]"  # LangGraph + SQLite checkpoints
-pip install -e ".[llm]"    # Kaggle CLI integration
-pip install -e ".[dev]"    # pytest, Ruff, mypy
+### Analyze
+
+```powershell
+uv run bpmn-agent analyze ".\tests\fixtures\execution_process.bpmn"
+uv run bpmn-agent analyze ".\tests\fixtures\execution_process.bpmn" --json
 ```
 
-## Quick start: deterministic planning and execution
+Analysis is deterministic and read-only. It reports structural metrics and evidence-based findings; it does not invent process recommendations.
 
-Inspection and planning do not require an LLM.
+### Apply one or more recommendations
 
-```bash
-# Inspect a model
-bpmn-agent inspect tests/fixtures/execution_process.bpmn --summary-only
-
-# Search for a BPMN element
-bpmn-agent find tests/fixtures/execution_process.bpmn "review"
-
-# Build and save a read-only plan
-bpmn-agent plan tests/fixtures/execution_process.bpmn \
-  "Rename task" \
-  --operation rename_element \
-  --target-element-id Task_1 \
-  --new-name "Validate request" \
-  --save-plan output/plans/rename-task.json
-
-# Execute only after reviewing the saved plan
-bpmn-agent execute output/plans/rename-task.json \
-  output/bpmn/execution_process_modified.bpmn \
-  --approved
+```powershell
+uv run bpmn-agent change ".\tests\fixtures\execution_process.bpmn" `
+  --request "Ajoutez une tâche utilisateur nommée 'Valider la demande' avant l'activité 'Rédiger le cahier des charges'."
 ```
 
-The `execute` command will not overwrite either the source or an existing destination file.
+The agent grounds each Qwen interpretation locally, asks for clarification when required, prints the exact plan, and asks for approval. Approved recommendations accumulate in one internal working model. Only after all requests are processed is one final file written to `generated/<original filename>`.
 
-## Durable agent workflow
+Repeat `--request` for a batch, or use `--requests-file requests.txt` with one recommendation per non-empty UTF-8 line:
 
-Use the agent commands when a change may require clarification, a separate approval step, or recovery across processes.
-
-```bash
-bpmn-agent agent-start tests/fixtures/ambiguous_processes.bpmn \
-  "Rename 'Review request' to 'Validate request'" \
-  --output-path output/bpmn/validated-request.bpmn
+```powershell
+uv run bpmn-agent change process.bpmn `
+  --request "Ajoutez un contrôle avant 'Publier le dossier'." `
+  --request "Renommez 'Contrôler' en 'Valider'."
 ```
 
-The response contains a `run_id` and stops at either `needs_clarification` or `waiting_for_approval`. Resume the persisted run with the requested information:
+For a chosen output path:
 
-```bash
-# Disambiguate the process or target
-bpmn-agent agent-resume <run_id> --process-id Process_B
-
-# Approve the exact persisted plan
-bpmn-agent agent-resume <run_id> \
-  --approved \
-  --output-path output/bpmn/validated-request.bpmn
-
-# Inspect durable state at any time
-bpmn-agent agent-status <run_id>
+```powershell
+uv run bpmn-agent change process.bpmn `
+  --request "Supprimez l'activité 'Saisir la demande'." `
+  --output ".\generated\result.bpmn"
 ```
 
-Use `--rejected` or `--cancelled` to stop without execution.
+A non-interactive invocation never guesses or auto-approves: if clarification or approval cannot be collected, it stops safely without executing.
 
-## Optional Qwen3 interpretation through Kaggle
+### Interactive session
 
-For richer natural-language interpretation, the agent can submit a generated private Kaggle kernel that runs `Qwen/Qwen3-8B`. The remote model returns only a constrained interpretation object; the local system still performs grounding, planning, approval, execution, and validation.
-
-Prerequisites:
-
-1. Install the `llm` or `all` extra.
-2. Authenticate the Kaggle CLI using your Kaggle credentials.
-3. Create or choose a Kaggle kernel reference in `owner/kernel-slug` form.
-4. Ensure the Kaggle account can run GPU kernels and access the model.
-
-```bash
-bpmn-agent agent-start data/bpmn/"Suivi des commandes.bpmn" \
-  "Renommez l'activité « Ancien nom » en « Nouveau nom »." \
-  --interpretation-mode qwen3-kaggle \
-  --kaggle-kernel-ref owner/kernel-slug \
-  --output-path output/bpmn/suivi_commandes_v001.bpmn
-
-bpmn-agent agent-llm-status <run_id>
-bpmn-agent agent-resume <run_id> --fetch-llm
+```powershell
+uv run bpmn-agent interactive ".\tests\fixtures\execution_process.bpmn"
 ```
 
-For a higher-level guided flow, `bpmn-agent change` manages polling, clarification, approval, output metadata, and default version naming. `bpmn-agent interactive` chains several successful changes so each generated version becomes the input to the next request.
+Enter one natural-language request at each `bpmn>` prompt. Every approved recommendation updates only an internal working model. `:finish` validates the accumulated result and writes exactly one final BPMN; rejected or failed recommendations leave the working model unchanged.
 
-## Inspection, analysis, and preview commands
+Available session commands:
 
-```bash
-# Full structural validation
-bpmn-agent validate data/bpmn/"Gestion des contrats.bpmn"
+- `:status` — show source, final target, process scope, approved count, and validation
+- `:history` — list approved logical operations, not temporary files
+- `:reset` — discard working changes and return to the untouched source
+- `:finish` — validate, write the final BPMN, and exit
+- `:quit` — prompt to save when approved changes remain unsaved
 
-# Local predecessor/successor context
-bpmn-agent context tests/fixtures/simple_process.bpmn Task_Finance
+An existing final path is never silently given a version suffix. The terminal asks before overwriting; use `--force` for explicit non-interactive replacement.
 
-# Directed graph path
-bpmn-agent path tests/fixtures/simple_process.bpmn StartEvent_1 EndEvent_1
+## Optimization recommendations
 
-# Deterministic process analysis
-bpmn-agent analyze data/bpmn/"Suivi des commandes.bpmn" --json
-
-# Interactive side-by-side semantic preview
-bpmn-agent preview before.bpmn after.bpmn --output outputs/previews/change.html
-
-# Screenshot-oriented presentation mode
-bpmn-agent preview before.bpmn after.bpmn --presentation --no-open
+```powershell
+uv run bpmn-agent recommend ".\data\bpmn\as_is\Suivi des commandes.bpmn"
+uv run bpmn-agent recommend process.bpmn --goal "Réduire le travail manuel" --json
 ```
 
-Most engineering commands emit structured JSON. Preview generation writes a standalone HTML document containing both BPMN XML models; rendering loads `bpmn-js` assets from a public CDN when the page is opened.
+The deterministic analyzer first extracts structural and lexical evidence from the AS-IS BPMN. Qwen reasons over that compact evidence, and local validation rejects recommendations that cite nonexistent elements, incorrect lanes or processes, or unsupported execution mappings. Recommendations are ranked and displayed only; they are never applied automatically and no BPMN output is created.
 
-## MCP server
+CIBLE files, the dataset manifest, planted issues, and evaluation labels are never exposed to runtime recommendation generation. They are used only by the separate evaluation utility.
 
-The same capabilities are available to MCP-compatible AI clients:
+## Safety model
 
-```bash
-uv run mcp dev src/bpmn_agentic_engineer/mcp_server/server.py
+1. The parser builds the real process, lane, element, sequence-flow, and BPMN-DI indexes.
+2. Compact context exposes aliases to Qwen rather than real BPMN IDs.
+3. The LLM response is parsed and validated against a strict schema.
+4. Grounding maps names and aliases back to local IDs; duplicates require clarification.
+5. The planner allows only supported deterministic operations and attaches source/plan checksums.
+6. Execution requires approval, rejects source overwrite and checksum changes, and writes a new file.
+7. The output is independently reparsed and validated. Failed validation is never reported as success.
+
+Durable workflow state lives in `.bpmn_agent/` and is ignored by Git. It supports Qwen waiting, clarification, approval, execution, and validation interrupts through one canonical LangGraph workflow.
+
+## Python API
+
+`BpmnChangeService` is the supported high-level facade:
+
+```python
+from bpmn_agentic_engineer.change_service import BpmnChangeService
+
+service = BpmnChangeService()
+result = service.run_change(
+    "process.bpmn",
+    "Renommez l'activité 'Contrôler la demande' en 'Valider la demande'.",
+    clarification_handler=my_clarification_handler,
+    approval_handler=my_approval_handler,
+)
 ```
 
-| MCP tool | Role |
-|---|---|
-| `inspect_bpmn` | Inspect processes, elements, lanes, and flows |
-| `find_bpmn_elements` | Search the local BPMN catalogue |
-| `get_bpmn_element_context` | Retrieve neighboring nodes and flows |
-| `find_bpmn_path` | Find a directed path between two nodes |
-| `validate_bpmn` | Run deterministic structural checks |
-| `plan_bpmn_change` | Produce a checksummed read-only plan |
-| `execute_bpmn_plan` | Apply an explicitly approved plan to a new file |
-| `run_bpmn_agent` | Start a durable agent workflow |
-| `resume_bpmn_agent` | Resume an LLM, clarification, or approval gate |
-| `get_bpmn_agent_llm_status` | Read the associated Kaggle job status |
-| `get_bpmn_agent_run` | Read persisted workflow state |
+`BpmnTransformationSession` (also exported as `BpmnInteractiveSession`) owns the private working model and the single final publication boundary. Lower-level parser, planner, executor, and validator classes remain available for controlled integrations.
 
-MCP annotations distinguish read-only inspection/planning tools from stateful or copy-writing operations.
-
-## Repository structure
+## Project structure
 
 ```text
 src/bpmn_agentic_engineer/
-├── bpmn/          BPMN XML loading, lane resolution, graph extraction, search
-├── analysis/      deterministic graph and process-pattern analysis
-├── planning/      request parsing, element grounding, atomic plan generation
-├── execution/     guarded XML and BPMN-DI transformations
-├── validation/    structural validation and reachability checks
-├── agent/         durable LangGraph workflow and human gates
-├── llm/           ID-free Qwen schema, prompts, normalization, Kaggle bridge
-├── mcp_server/    MCP tool surface
-├── change_service.py  high-level single-change and interactive facades
-├── preview.py     semantic diff and HTML before/after visualization
-└── cli.py         command-line interface
+├── agent/           LangGraph state, routing, nodes, persistence, and resume
+├── analysis/        Deterministic read-only structural analysis
+├── bpmn/            XML document model and process inspector
+├── execution/       Approved XML, flow, lane, and BPMN-DI transformations
+├── llm/             Compact context, Qwen worker, Kaggle bridge, and schemas
+├── planning/        Deterministic parsing, grounding, clarification, and plans
+├── validation/      Structural and BPMN-DI validation
+├── change_service.py
+├── cli.py
+├── integrity.py
+└── models.py
 
-data/bpmn/         real French-language BPMN examples
-evaluation/        reproducible end-to-end evaluation scenarios and evidence
-tests/             unit, regression, orchestration, and integration tests
-docs/              architecture decisions
+tests/
+└── fixtures/        Small sanitized BPMN regression models
+
+data/bpmn/as_is/     BPMN inputs supplied to the agent
+data/bpmn/cible/     Optimized evaluation references; never agent inputs
+data/bpmn/dataset_manifest.json  Hidden evaluation ground truth
+docs/                Architecture rationale
 ```
 
-The root also retains milestone patch bundles and setup notes as development history. Runtime behavior is defined by the root `src/` package and tested by the root `tests/` suite.
+Generated BPMNs, checkpoints, Kaggle jobs, logs, and temporary outputs are ignored and are not part of the source tree.
 
-## Validation and testing
+## Evaluation dataset
 
-```bash
+Files under `data/bpmn/as_is/` are deliberately degraded but structurally valid processes used as agent inputs. Their optimized references live under `data/bpmn/cible/` and are used only after execution for evaluation. `data/bpmn/dataset_manifest.json` records the intentional issues and expected operation families; it is evaluation ground truth and must never be included in LLM context.
+
+Agent outputs belong under the ignored `generated/` directory, never inside either immutable dataset directory. See [docs/BPMN_DATASET.md](docs/BPMN_DATASET.md) for the concise case inventory.
+
+## Testing
+
+```powershell
 uv run pytest -q
-uv run ruff check src tests
 ```
 
-The current suite contains **73 passing tests** covering XML inspection, structural validation, planning and grounding, guarded execution, cross-lane insertion, linear consolidation, durable agent behavior, Qwen schema normalization, preview generation, high-level change flows, and analysis.
+The default suite mocks external Qwen/Kaggle work where appropriate. It covers parsing, validation, analysis, schemas, normalization, grounding, ambiguity, process scope, planning, all supported operations, checksums, approval, execution, BPMN-DI, durable workflow state, atomic multi-change sessions, and final-output collisions.
 
-The validator checks duplicate IDs, dangling sequence-flow references, explicit and implicit process boundaries, missing connectivity, reachability, and reachable exits. Findings are separated into blocking errors, warnings, and informational patterns.
+A real Qwen smoke test requires Kaggle network access and credentials and is intentionally not part of the default suite.
 
-## Evaluation evidence
+## Current boundaries
 
-The repository includes two end-to-end evaluation scenarios built from real French procurement processes. Scenario 002 reconstructs an intentionally modified **Suivi des commandes** model through three sequential Qwen-assisted changes. Its checked-in evaluation reports:
-
-- 3/3 correct interpretations, target groundings, plans, and executions;
-- no manual interpretation or BPMN correction;
-- 100% semantic node and sequence-flow match against the reference;
-- 100% BPMN type and lane-assignment accuracy;
-- zero structural errors in the final generated model;
-- successful clarification behavior for a deliberately ambiguous request.
-
-These are repository evaluation results for the included scenarios, not a claim of universal accuracy across arbitrary BPMN models.
-
-## Current limitations
-
-- Validation is a deterministic structural safety check, not full BPMN 2.0 XSD validation or execution-engine semantic verification.
-- The write surface is intentionally limited to the supported transformations listed above; arbitrary XML generation is not allowed.
-- Automatic repair is not implemented. A failed post-execution validation reaches a bounded repair boundary and stops.
-- Natural-language parsing is focused on the supported English/French request patterns. Explicit CLI or MCP hints remain useful for specialized wording.
-- Qwen mode depends on external Kaggle availability, authentication, quotas, GPU execution, and model access.
-- The HTML preview uses CDN-hosted `bpmn-js` assets and therefore needs network access when viewed.
-
-## Design intent
-
-This repository explores a practical boundary for agentic process engineering: use language models where semantic interpretation is valuable, but keep authoritative graph reasoning and mutation inside inspectable, testable, deterministic code. The result is suitable for experimentation, technical review, and controlled BPMN transformation workflows where traceability matters as much as convenience.
+- The project executes requested recommendations; it does not autonomously invent optimizations.
+- Only the five documented deterministic operations are supported.
+- Real Qwen interpretation depends on an authenticated Kaggle environment and may take several minutes.
+- Structural validation is intentionally focused on safe agentic editing, not full BPMN XSD or execution-engine conformance.
 
 ## License
 
-MIT — see the package metadata in `pyproject.toml`.
+MIT

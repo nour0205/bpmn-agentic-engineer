@@ -1,0 +1,313 @@
+{
+  "schema_version": "1.0",
+  "ground_truth_only": true,
+  "cases": [
+    {
+      "case_id": "process_1",
+      "as_is": "data/bpmn/as_is/Approvisionnement Gré à gré&Mise en place.bpmn",
+      "cible": "data/bpmn/cible/Approvisionnement Gré à gré&Mise en place.bpmn",
+      "process_name": "Approvisionnement par gré à gré / Mise en place",
+      "process_id": "Id_e76115c1-faf6-4309-bf66-6d9c913e318a",
+      "cible_sha256": "1d1bb4470168d22040037b8fce8981af7083a71b5b245568176ac78679492cad",
+      "as_is_sha256": "d798d4ddf087a34c65e4c49baba24598ec57de7f8d2de62ed9229a1bbf7f1ede",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "missing_control",
+          "description": "L'archivage du procès-verbal dans la GED est absent.",
+          "as_is_elements": [],
+          "cible_element": "Id_b9845a20-7617-4a14-8f63-dfea3620fa0a",
+          "expected_operation": "insert_task_after",
+          "executable_by_current_engine": true,
+          "restore_anchor": "Id_6b591ccc-7c5e-4ae3-a5bb-989c70b8fa7d",
+          "restore_name": "Uploader le PV sur le système de gestion électronique des documents (GED)",
+          "lane": "Secrétariat de la Commission d’Achats des Médicaments (CAM)"
+        },
+        {
+          "id": "issue_02",
+          "category": "redundant_activity",
+          "description": "Un envoi manuel redondant précède la gestion contractuelle.",
+          "as_is_elements": [
+            "Id_df732963-5560-5530-a51a-726b1f320a29"
+          ],
+          "cible_element": "Id_dd585253-78ef-48c4-b58d-e2674330d660",
+          "expected_operation": "remove_element",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_03",
+          "category": "legacy_label",
+          "description": "La fiche article porte un libellé technique hérité.",
+          "as_is_elements": [
+            "Id_d4366c16-f3a5-48b8-b8db-78ab4f7ba446"
+          ],
+          "cible_element": "Id_d4366c16-f3a5-48b8-b8db-78ab4f7ba446",
+          "expected_operation": "rename_element",
+          "executable_by_current_engine": true
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    },
+    {
+      "case_id": "process_2",
+      "as_is": "data/bpmn/as_is/Approvisionnement par Appel d'offres.bpmn",
+      "cible": "data/bpmn/cible/Approvisionnement par Appel d'offres.bpmn",
+      "process_name": "Préparation et traitement des commandes d’achat - Par Appel d'offres",
+      "process_id": "Id_1a378fa6-28f6-4313-b53f-35ddd52a25a7",
+      "cible_sha256": "7018e7730ff298569b2cc1db327cd6a61f1c61887f5831a24d83b31cd13be8e0",
+      "as_is_sha256": "4fe89de37f9decab1a43d084154b81658e12d128b7079983b2c160a18bd718d9",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "missing_control",
+          "description": "L'archivage contrôlé du cahier des charges dans la GED est absent.",
+          "as_is_elements": [],
+          "cible_element": "Id_bd964e40-ca81-4d88-8a1e-1f4f59c96d6b",
+          "expected_operation": "insert_task_after",
+          "executable_by_current_engine": true,
+          "restore_anchor": "Id_d985cf4d-0f92-42db-8f44-f88d8fb6b61e",
+          "restore_name": "Uploader le CDC sur le système de gestion électronique des documents (GED)",
+          "lane": "SPCM"
+        },
+        {
+          "id": "issue_02",
+          "category": "redundant_activity",
+          "description": "Une diffusion manuelle redondante précède la sélection du Fournisseur.",
+          "as_is_elements": [
+            "Id_6dedda43-7209-5eb9-bfbe-c4108365f16c"
+          ],
+          "cible_element": "Id_1b6a9ad8-fe94-44a6-ae3d-da5152d4469d",
+          "expected_operation": "remove_element",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_03",
+          "category": "legacy_label",
+          "description": "L'intégration financière conserve un libellé d'ancien mode opératoire.",
+          "as_is_elements": [
+            "Id_264ff46e-db65-4fff-a106-8c0061e26952"
+          ],
+          "cible_element": "Id_264ff46e-db65-4fff-a106-8c0061e26952",
+          "expected_operation": "rename_element",
+          "executable_by_current_engine": true
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    },
+    {
+      "case_id": "process_3",
+      "as_is": "data/bpmn/as_is/Détermination des besoins d'approvisionnement.bpmn",
+      "cible": "data/bpmn/cible/Détermination des besoins d'approvisionnement.bpmn",
+      "process_name": "Détermination des besoins d’approvisionnement",
+      "process_id": "Id_e6326128-4d51-4eee-b38c-c74471effa51",
+      "cible_sha256": "eba58538896d9fdcaef785bc4679b7f5ab2d5aabd96e3a06913f1729c5e898e3",
+      "as_is_sha256": "8b449b507fb5d996f6cf7fcc30dff7365e044067852079815ab6bd308d709a50",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "manual_sequence",
+          "description": "Le calcul automatique de couverture devient une chaîne manuelle Excel.",
+          "as_is_elements": [
+            "Id_c785a05d-e52d-4a18-ad55-5389b2af29c8",
+            "Id_65bd15b8-2fad-52dd-91cd-a73c790823ec",
+            "Id_6844cb2e-cb58-5764-8741-b044bc8cfc46"
+          ],
+          "cible_element": "Id_c785a05d-e52d-4a18-ad55-5389b2af29c8",
+          "expected_operation": "replace_linear_task_sequence",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_02",
+          "category": "missing_control",
+          "description": "L'analyse financière des simulations est omise avant le choix optimal.",
+          "as_is_elements": [],
+          "cible_element": "Id_8070c07c-058f-4955-9be0-542e8757784e",
+          "expected_operation": "insert_task_before",
+          "executable_by_current_engine": true,
+          "restore_anchor": "Id_4a2a1c70-f704-4713-9b0b-717e06ba4b91",
+          "restore_name": "Effectuer une analyse financiére des simulations",
+          "lane": "Direction Financiére"
+        },
+        {
+          "id": "issue_03",
+          "category": "redundant_activity",
+          "description": "Une copie manuelle redondante est ajoutée après les simulations.",
+          "as_is_elements": [
+            "Id_da5290c8-69b0-555c-876e-c1e7d93d74f6"
+          ],
+          "cible_element": "Id_87b782da-2f76-463a-8d76-7b885d5f564e",
+          "expected_operation": "remove_element",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    },
+    {
+      "case_id": "process_4",
+      "as_is": "data/bpmn/as_is/Gestion des contrats.bpmn",
+      "cible": "data/bpmn/cible/Gestion des contrats.bpmn",
+      "process_name": "Gestion des contrats",
+      "process_id": "Id_c58e5e64-12ab-407d-9b7f-f539747eefc6",
+      "cible_sha256": "231e009fb1040a54f3862994b67e570308204129e06076abf53ec34b31c65644",
+      "as_is_sha256": "68423f336603a99289f55986111dc25ef550ec7a39bfa826a987742d5c94b16c",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "manual_sequence",
+          "description": "La récupération automatique du contrat signé devient manuelle.",
+          "as_is_elements": [
+            "Id_3d54e3ee-19ee-4408-b045-6e5c8bbbd139",
+            "Id_4d7ad22b-d475-5de9-b56a-7d3eb55ee93e"
+          ],
+          "cible_element": "Id_3d54e3ee-19ee-4408-b045-6e5c8bbbd139",
+          "expected_operation": "replace_linear_task_sequence",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_02",
+          "category": "missing_control",
+          "description": "La revue juridique du contrat est omise après la revue Approvisionnement.",
+          "as_is_elements": [],
+          "cible_element": "Id_efd322c2-715d-465d-9f7e-079fba3bff87",
+          "expected_operation": "insert_task_after",
+          "executable_by_current_engine": true,
+          "restore_anchor": "Id_f41ade0b-5337-4e06-8a0f-4ef411081ce2",
+          "restore_name": "Revoir et valider le contrat",
+          "lane": "Responsable du Département Juridique"
+        },
+        {
+          "id": "issue_03",
+          "category": "legacy_label",
+          "description": "La réception du projet de contrat utilise un ancien libellé orienté fichier.",
+          "as_is_elements": [
+            "Id_47167652-5b08-4cb4-99fb-81eb6f5db218"
+          ],
+          "cible_element": "Id_47167652-5b08-4cb4-99fb-81eb6f5db218",
+          "expected_operation": "rename_element",
+          "executable_by_current_engine": true
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    },
+    {
+      "case_id": "process_5",
+      "as_is": "data/bpmn/as_is/Lancement des commandes.bpmn",
+      "cible": "data/bpmn/cible/Lancement des commandes.bpmn",
+      "process_name": "Lancement des commandes",
+      "process_id": "Id_fb535085-ad3b-407b-a577-bfcaccb8c23e",
+      "cible_sha256": "6c6bf098daf3de22f161c82cdc6628dbe660cc54ed7fcbb377cf88e62555de7b",
+      "as_is_sha256": "c3598c00c7efced46943cacb16cb9cc7acc21f31c1405fb2900348d024777935",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "manual_sequence",
+          "description": "La suggestion automatique du planning devient une préparation manuelle.",
+          "as_is_elements": [
+            "Id_c239fba4-5e23-4627-9c1b-a3b2b10049e5",
+            "Id_e61f1ef1-852a-5e16-9d97-bc0a2623a39f"
+          ],
+          "cible_element": "Id_c239fba4-5e23-4627-9c1b-a3b2b10049e5",
+          "expected_operation": "replace_linear_task_sequence",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_02",
+          "category": "redundant_activity",
+          "description": "Une transmission manuelle redondante précède le sous-processus Transit.",
+          "as_is_elements": [
+            "Id_f7aa3173-e337-5eca-ad61-19f97becd41d"
+          ],
+          "cible_element": "Id_97cad88e-1f91-4e15-a224-120d865e608b",
+          "expected_operation": "remove_element",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_03",
+          "category": "legacy_label",
+          "description": "L'envoi de commande conserve un libellé centré sur les pièces jointes.",
+          "as_is_elements": [
+            "Id_41cdc504-6b4f-4b82-8847-31ea80ea0c94"
+          ],
+          "cible_element": "Id_41cdc504-6b4f-4b82-8847-31ea80ea0c94",
+          "expected_operation": "rename_element",
+          "executable_by_current_engine": true
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    },
+    {
+      "case_id": "process_6",
+      "as_is": "data/bpmn/as_is/Suivi des commandes.bpmn",
+      "cible": "data/bpmn/cible/Suivi des commandes.bpmn",
+      "process_name": "Suivi des commandes",
+      "process_id": "Id_14e4a3e9-61cb-46d3-8ab0-3058189f16da",
+      "cible_sha256": "e972107f8b801af1e67b1649690124ffe7b00c24a819bfd7c30ff127b70c7dc8",
+      "as_is_sha256": "aed042fc346cd2d4b0baca7e10802a41b2f35ce2963de500b040b9d7a11da356",
+      "introduced_issues": [
+        {
+          "id": "issue_01",
+          "category": "manual_sequence",
+          "description": "Le reporting automatique devient une consolidation manuelle.",
+          "as_is_elements": [
+            "Id_cb31e508-73e6-4f40-a87d-63a9772d98fc",
+            "Id_62a0f445-c0ea-553d-9a3e-08b725945a2c"
+          ],
+          "cible_element": "Id_cb31e508-73e6-4f40-a87d-63a9772d98fc",
+          "expected_operation": "replace_linear_task_sequence",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        },
+        {
+          "id": "issue_02",
+          "category": "missing_control",
+          "description": "La validation Direction Générale de la lettre de relance est absente.",
+          "as_is_elements": [],
+          "cible_element": "Id_7707912d-3d8b-4b43-b170-13f088fbbe93",
+          "expected_operation": "insert_task_after",
+          "executable_by_current_engine": true,
+          "restore_anchor": "Id_a761d73c-82aa-42cf-bd99-bd23b1573a10",
+          "restore_name": "Valider la lettre de relance",
+          "lane": "Direction Générale"
+        },
+        {
+          "id": "issue_03",
+          "category": "redundant_activity",
+          "description": "Une consignation manuelle redondante suit la relance Fournisseur.",
+          "as_is_elements": [
+            "Id_bf30ac25-8f10-5035-b305-b4ad69dc1c88"
+          ],
+          "cible_element": "Id_98828c6c-2aaa-4017-8d07-60d1365b92c5",
+          "expected_operation": "remove_element",
+          "executable_by_current_engine": true,
+          "lane": "Direction d'Approvisionnement"
+        }
+      ],
+      "intentional_differences": 3,
+      "unexplained_differences": 0,
+      "as_is_structural_errors": 0,
+      "cible_structural_errors": 0
+    }
+  ]
+}

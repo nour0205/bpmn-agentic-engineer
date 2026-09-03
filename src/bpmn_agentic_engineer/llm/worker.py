@@ -8,7 +8,7 @@ from typing import Any
 def render_qwen3_worker(payload: dict[str, Any]) -> str:
     embedded = json.dumps(payload, ensure_ascii=False)
     return dedent(
-        f'''\
+        f"""\
         from __future__ import annotations
 
         import json
@@ -17,13 +17,26 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
         import re
         import subprocess
         import sys
+        import traceback
         import unicodedata
 
         PAYLOAD = json.loads({embedded!r})
-        OUTPUT = Path("/kaggle/working/llm_interpretation.json")
+        JOB_TYPE = PAYLOAD.get("job_type", "interpret_change")
+        RESULT_FILENAMES = {{
+            "interpret_change": "llm_interpretation.json",
+            "recommend_optimizations": "recommendation_result.json",
+        }}
+        if JOB_TYPE not in RESULT_FILENAMES:
+            raise ValueError(f"Unsupported job_type: {{JOB_TYPE!r}}")
+        expected_filename = RESULT_FILENAMES[JOB_TYPE]
+        if PAYLOAD.get("result_filename", expected_filename) != expected_filename:
+            raise ValueError("The result filename does not match the job type contract.")
+        OUTPUT = Path("/kaggle/working") / expected_filename
         RAW_OUTPUT = Path("/kaggle/working/llm_raw_output.txt")
         JOB_MANIFEST = Path("/kaggle/working/llm_job_manifest.json")
+        JOB_ERROR = Path("/kaggle/working/job_error.json")
         MODEL_ID = "Qwen/Qwen3-8B"
+        STAGE = "initialization"
 
 
         def ensure_packages() -> None:
@@ -199,14 +212,32 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
             return normalized
 
 
-        def main() -> None:
+        def dispatch_result(result: dict) -> dict:
+            if JOB_TYPE == "interpret_change":
+                return normalize_result(result)
+            if JOB_TYPE == "recommend_optimizations":
+                if set(result) != {{"recommendations"}}:
+                    raise ValueError(
+                        "Recommendation output must contain only the recommendations field."
+                    )
+                if not isinstance(result["recommendations"], list):
+                    raise TypeError("recommendations must be an array.")
+                return result
+            raise ValueError(f"Unsupported job_type: {{JOB_TYPE!r}}")
+
+
+        def run_job() -> None:
+            global STAGE
+            STAGE = "dependency_setup"
             ensure_packages()
+            STAGE = "model_import"
             import torch
             from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
             if not torch.cuda.is_available():
                 raise RuntimeError("A Kaggle NVIDIA GPU accelerator is required.")
 
+            STAGE = "model_load"
             quantization = BitsAndBytesConfig(
                 load_in_4bit=True,
                 bnb_4bit_quant_type="nf4",
@@ -221,6 +252,7 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
                 quantization_config=quantization,
             )
 
+            STAGE = "prompt_render"
             text = tokenizer.apply_chat_template(
                 PAYLOAD["messages"],
                 tokenize=False,
@@ -228,16 +260,26 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
                 enable_thinking=False,
             )
             model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+            input_tokens = model_inputs.input_ids.shape[1]
+            max_input_tokens = 6144 if JOB_TYPE == "recommend_optimizations" else 4096
+            if input_tokens > max_input_tokens:
+                raise ValueError(
+                    f"The {{JOB_TYPE}} prompt has {{input_tokens}} tokens; "
+                    f"the safe limit is {{max_input_tokens}}. Compact the local evidence context."
+                )
+            STAGE = "generation"
             generated = model.generate(
                 **model_inputs,
-                max_new_tokens=384,
+                max_new_tokens=2048 if JOB_TYPE == "recommend_optimizations" else 384,
                 do_sample=False,
                 repetition_penalty=1.05,
             )
             new_tokens = generated[0][model_inputs.input_ids.shape[1]:]
             raw = tokenizer.decode(new_tokens, skip_special_tokens=True).strip()
             RAW_OUTPUT.write_text(raw, encoding="utf-8")
-            result = normalize_result(extract_json_object(raw))
+            STAGE = "result_parse"
+            result = dispatch_result(extract_json_object(raw))
+            STAGE = "artifact_write"
             OUTPUT.write_text(
                 json.dumps(result, ensure_ascii=False, indent=2) + "\\n",
                 encoding="utf-8",
@@ -250,6 +292,8 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
                         "run_id": PAYLOAD["run_id"],
                         "request_sha256": PAYLOAD["request_sha256"],
                         "model_id": MODEL_ID,
+                        "job_type": JOB_TYPE,
+                        "result_filename": expected_filename,
                         "status": "completed",
                     }},
                     ensure_ascii=False,
@@ -269,7 +313,26 @@ def render_qwen3_worker(payload: dict[str, Any]) -> str:
             )
 
 
+        def main() -> None:
+            try:
+                run_job()
+            except Exception as exc:
+                diagnostic = {{
+                    "stage": STAGE,
+                    "error_type": type(exc).__name__,
+                    "message": str(exc),
+                    "traceback_tail": traceback.format_exc().splitlines()[-20:],
+                    "job_type": JOB_TYPE,
+                }}
+                JOB_ERROR.write_text(
+                    json.dumps(diagnostic, ensure_ascii=False, indent=2) + "\\n",
+                    encoding="utf-8",
+                )
+                print(json.dumps({{"status": "error", **diagnostic}}, ensure_ascii=False))
+                raise
+
+
         if __name__ == "__main__":
             main()
-        '''
+        """
     )

@@ -48,7 +48,7 @@ class BasicValidator:
             "issues": [issue.to_dict() for issue in issues],
             "scope_note": (
                 "Basic structural validation only; full BPMN XSD and execution "
-                "semantics will be added in a later milestone."
+                "semantics are outside the current structural validator."
             ),
         }
 

@@ -5,11 +5,8 @@ from bpmn_agentic_engineer.planning import ChangePlanner
 from bpmn_agentic_engineer.planning.grounding import ElementGrounder
 
 ROOT = Path(__file__).parents[1]
-BASELINE_V002 = (
-    ROOT / "outputs" / "full_regression_appel_offres" / "input" / "generated"
-    / "baseline_v002.bpmn"
-)
-TARGET_ID = "Id_1b6a9ad8-fe94-44a6-ae3d-da5152d4469d"
+BASELINE_V002 = ROOT / "tests" / "fixtures" / "core_regression.bpmn"
+TARGET_ID = "Call_Supplier"
 
 
 def grounder() -> ElementGrounder:
