@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Definitions_Core" targetNamespace="https://example.test/bpmn">
+  <bpmn:process id="Process_Core" name="Contract review" isExecutable="false">
+    <bpmn:laneSet id="LaneSet_Core">
+      <bpmn:lane id="Lane_Procurement" name="Direction d'Approvisionnement">
+        <bpmn:flowNodeRef>Start_Core</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Review_Procurement</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_Supplier</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Core</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Legal" name="Responsable du Département Juridique">
+        <bpmn:flowNodeRef>Task_Review_Legal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Sign</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:startEvent id="Start_Core" name="Contract received">
+      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="Task_Review_Procurement" name="Revoir et valider le contrat">
+      <bpmn:incoming>Flow_1</bpmn:incoming><bpmn:outgoing>Flow_2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Review_Legal" name="Revoir et valider le contrat">
+      <bpmn:incoming>Flow_2</bpmn:incoming><bpmn:outgoing>Flow_3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Task_Sign" name="Imprimer et signer le contrat">
+      <bpmn:incoming>Flow_3</bpmn:incoming><bpmn:outgoing>Flow_4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:callActivity id="Call_Supplier" name="Sélection du Fournisseur et lancement des commandes">
+      <bpmn:incoming>Flow_4</bpmn:incoming><bpmn:outgoing>Flow_5</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="End_Core" name="Done"><bpmn:incoming>Flow_5</bpmn:incoming></bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1" sourceRef="Start_Core" targetRef="Task_Review_Procurement"/>
+    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_Review_Procurement" targetRef="Task_Review_Legal"/>
+    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_Review_Legal" targetRef="Task_Sign"/>
+    <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_Sign" targetRef="Call_Supplier"/>
+    <bpmn:sequenceFlow id="Flow_5" sourceRef="Call_Supplier" targetRef="End_Core"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_Core"><bpmndi:BPMNPlane id="Plane_Core" bpmnElement="Process_Core">
+    <bpmndi:BPMNShape id="Shape_Start" bpmnElement="Start_Core"><dc:Bounds x="80" y="120" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_Review_Procurement" bpmnElement="Task_Review_Procurement"><dc:Bounds x="150" y="100" width="120" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_Review_Legal" bpmnElement="Task_Review_Legal"><dc:Bounds x="310" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_Sign" bpmnElement="Task_Sign"><dc:Bounds x="470" y="220" width="120" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_Supplier" bpmnElement="Call_Supplier"><dc:Bounds x="630" y="100" width="120" height="80"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNShape id="Shape_End" bpmnElement="End_Core"><dc:Bounds x="790" y="120" width="36" height="36"/></bpmndi:BPMNShape>
+    <bpmndi:BPMNEdge id="Edge_1" bpmnElement="Flow_1"><di:waypoint x="116" y="138"/><di:waypoint x="150" y="140"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Edge_2" bpmnElement="Flow_2"><di:waypoint x="270" y="140"/><di:waypoint x="310" y="260"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Edge_3" bpmnElement="Flow_3"><di:waypoint x="430" y="260"/><di:waypoint x="470" y="260"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Edge_4" bpmnElement="Flow_4"><di:waypoint x="590" y="260"/><di:waypoint x="630" y="140"/></bpmndi:BPMNEdge>
+    <bpmndi:BPMNEdge id="Edge_5" bpmnElement="Flow_5"><di:waypoint x="750" y="140"/><di:waypoint x="790" y="138"/></bpmndi:BPMNEdge>
+  </bpmndi:BPMNPlane></bpmndi:BPMNDiagram>
+</bpmn:definitions>

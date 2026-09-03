@@ -42,9 +42,9 @@ def _clean_fragment(value: str | None) -> str | None:
 
 
 class ChangeRequestParser:
-    """Small deterministic parser for the first planning milestone.
+    """Small deterministic parser for supported change requests.
 
-    The MCP tool also accepts explicit hints. Those hints always take priority
+    Programmatic callers may also provide explicit hints. Those hints always take priority
     over values inferred from the natural-language request.
     """
 
@@ -531,7 +531,7 @@ class ChangePlanner:
                 requires_approval=False,
                 risks=("The selected sequence contains a non-task flow node.",),
                 clarification_questions=(
-                    "Only task-like BPMN elements can be consolidated in this milestone.",
+                    "Only task-like BPMN elements can be consolidated.",
                 ),
                 baseline_validation=validation_summary,
             ).to_dict()
@@ -1251,7 +1251,7 @@ class ChangePlanner:
                 "risks": ["Removing events or gateways may change control-flow semantics."],
                 "assumptions": [],
                 "clarification_questions": [
-                    "Removal of events and gateways is not supported in this safe planning milestone."
+                    "Removal of events and gateways is not supported by the safe planner."
                 ],
             }
 

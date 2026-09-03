@@ -1,42 +1,31 @@
-# Architecture decision: deterministic core before agent orchestration
+# Architecture decision: LLM interpretation, deterministic BPMN execution
 
 ## Decision
 
-The project begins with a deterministic, read-only BPMN core and exposes it
-through MCP. LangGraph and the LLM are introduced only after the tool contracts
-and regression tests are stable.
+The language model interprets business language but never reads or writes raw BPMN XML. All graph facts, target selection, planning, mutation, BPMN-DI updates, and validation remain deterministic and local.
 
-## Why
+## Canonical workflow
 
-An LLM must not infer graph facts that can be calculated exactly. The following
-remain deterministic:
+`BpmnChangeService` drives one durable LangGraph workflow:
 
-- XML loading;
-- ID and reference handling;
-- lane membership;
-- predecessor and successor lookup;
-- reachability;
-- path lookup;
-- structural validation;
-- future atomic XML patch application.
-
-The model will later handle:
-
-- interpreting ambiguous business requests;
-- choosing which inspection tools to call;
-- producing a grounded modification plan;
-- deciding how to react to validation feedback;
-- explaining trade-offs;
-- escalating uncertainty to a human.
+1. parse and validate the source;
+2. serialize compact aliased context;
+3. submit Qwen3-8B interpretation through Kaggle;
+4. validate the structured response;
+5. ground it against real elements, lanes, and processes;
+6. interrupt for clarification when the target is ambiguous;
+7. build and checksum an allow-listed plan;
+8. interrupt for explicit approval;
+9. execute on a copy, including BPMN-DI;
+10. independently parse and validate the output.
 
 ## Safety boundary
 
-The first MCP server is read-only. Future write tools will:
+- Source BPMNs are not overwritten.
+- Real BPMN IDs are not sent to the LLM.
+- Equivalent labels in different processes do not permit silent process switching.
+- Only supported deterministic operations can reach the executor.
+- The approved plan checksum and source checksum are verified at execution time.
+- Invalid generated BPMNs are reported as failures, never successful outputs.
 
-1. operate on a copy;
-2. accept typed patch objects;
-3. support only allow-listed transformations;
-4. return a diff;
-5. run validation automatically;
-6. require approval before promotion;
-7. preserve rollback information.
+LangGraph is retained because checkpointed interrupts and resume behavior are active product requirements. Runtime state is stored under ignored `.bpmn_agent/`.

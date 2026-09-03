@@ -387,8 +387,8 @@ class AgentNodes:
     def repair_boundary(self, state: AgentState) -> dict[str, Any]:
         attempts = int(state.get("repair_attempts", 0)) + 1
         message = (
-            "Automatic repair strategies are intentionally disabled in Milestone 4. "
-            "The failed validation result has been preserved for Milestone 5."
+            "Automatic repair is intentionally disabled. The invalid output and validation "
+            "report were preserved, but the change was not reported as successful."
         )
         return {
             "status": "failed",

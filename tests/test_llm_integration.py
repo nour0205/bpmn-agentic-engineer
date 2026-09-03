@@ -1,25 +1,25 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
 from bpmn_agentic_engineer.bpmn import BpmnDocument, ProcessInspector
 from bpmn_agentic_engineer.llm import (
     CompactContextBuilder,
-    enforce_generic_target_ambiguity,
     InterpretationValidator,
     KaggleQwenBridge,
     LlmInterpretation,
+    enforce_generic_target_ambiguity,
 )
 from bpmn_agentic_engineer.llm.worker import render_qwen3_worker
 from bpmn_agentic_engineer.planning import ChangePlanner
 
-
 FIXTURES = Path(__file__).parent / "fixtures"
-CONTRACTS = Path(__file__).parents[1] / "data" / "bpmn" / "Gestion des contrats.bpmn"
+CONTRACTS = FIXTURES / "core_regression.bpmn"
 
 
 def _catalogue(*names: str) -> dict:
@@ -193,11 +193,7 @@ def test_rendered_worker_preserves_explicit_lane_normalization() -> None:
         },
     }
     worker_source = render_qwen3_worker(
-        {
-            "messages": [
-                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)}
-            ]
-        }
+        {"messages": [{"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)}]}
     )
     namespace = {"__name__": "worker_test"}
     exec(compile(worker_source, "worker.py", "exec"), namespace)
@@ -315,7 +311,9 @@ def test_kaggle_bridge_prepares_and_submits_job(
         commands.append(list(command))
         return subprocess.CompletedProcess(command, 0, stdout="submitted", stderr="")
 
-    monkeypatch.setattr("bpmn_agentic_engineer.llm.kaggle.shutil.which", lambda _: "kaggle")
+    monkeypatch.setattr(
+        "bpmn_agentic_engineer.llm.kaggle.importlib.util.find_spec", lambda _: object()
+    )
     bridge = KaggleQwenBridge(command_runner=fake_runner)
     result = bridge.submit(
         run_id="run_test",
@@ -328,5 +326,6 @@ def test_kaggle_bridge_prepares_and_submits_job(
     kernel_dir = Path(result["kernel_dir"])
     assert (kernel_dir / "worker.py").exists()
     assert (kernel_dir / "kernel-metadata.json").exists()
-    assert commands[0][:3] == ["kaggle", "kernels", "push"]
+    assert commands[0][:6] == [sys.executable, "-X", "utf8", "-m", "kaggle", "kernels"]
+    assert "push" in commands[0]
     assert "NvidiaTeslaT4" in commands[0]

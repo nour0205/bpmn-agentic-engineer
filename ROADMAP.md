@@ -1,82 +1,34 @@
 # Roadmap
 
-## Milestone 1 — Read-only BPMN intelligence
+The core product is deliberately narrow: execute user-supplied BPMN recommendations safely and reliably.
 
-- [x] BPMN XML loader
-- [x] element and lane extraction
-- [x] sequence-flow graph
-- [x] element search
-- [x] predecessor/successor context
-- [x] path lookup
-- [x] deterministic basic validation
-- [x] CLI
-- [x] read-only MCP tools
-- [ ] run against all existing BPMN examples
-- [ ] connect the existing semantic parser through an adapter
-- [ ] add complex BPMN regression fixtures
+## Stable product scope
 
-## Milestone 2 — Change interpretation
+- [x] BPMN parsing, inspection, lanes, processes, and sequence-flow graph
+- [x] compact aliased context for Qwen3-8B
+- [x] Kaggle job preparation, polling, retrieval, and UTF-8 handling
+- [x] strict interpretation schema and local alias resolution
+- [x] deterministic grounding and ambiguity clarification
+- [x] checksummed plans and explicit approval
+- [x] copy-only XML execution and BPMN-DI updates
+- [x] structural validation and execution diff
+- [x] durable LangGraph interrupts and resume
+- [x] one-shot and multi-recommendation sessions with one final output
+- [x] process-scope safeguards for multi-process BPMNs
 
-Input:
+## Supported transformations
 
-```text
-"Add a correction task after financial rejection and return it for resubmission."
-```
+- [x] `insert_task_before`
+- [x] `insert_task_after`
+- [x] `rename_element`
+- [x] `remove_element`
+- [x] `replace_linear_task_sequence`
 
-Output:
+## Future reliability work
 
-```json
-{
-  "intent": "add_rejection_and_resubmission_path",
-  "affected_elements": [],
-  "operations": [],
-  "constraints": [],
-  "acceptance_criteria": [],
-  "uncertainties": []
-}
-```
+- [ ] broaden sanitized regression coverage for gateways and nested subprocesses
+- [ ] add an opt-in authenticated Qwen/Kaggle smoke-test marker
+- [ ] improve diagnostics for remote Kaggle quota and authentication failures
+- [ ] evaluate BPMN XSD validation as an additional validation layer
 
-Deliverables:
-
-- `ChangeRequest`
-- `ResolvedChangeRequest`
-- `ModificationPlan`
-- element-grounding step
-- plan review checkpoint
-
-## Milestone 3 — Atomic BPMN editing tools
-
-Initial supported transformations:
-
-- rename a task;
-- insert a task between two nodes;
-- change a task lane;
-- add a rejection branch;
-- parallelize two independent tasks.
-
-Every operation must:
-
-- create a new version;
-- preserve the original;
-- produce a semantic diff;
-- return affected IDs;
-- be reversible.
-
-## Milestone 4 — Verification and repair
-
-- XML and reference validation
-- reachability
-- gateway consistency
-- loop checks
-- affected-path regression tests
-- critic/verifier agent
-- bounded repair loop
-
-## Milestone 5 — Human-in-the-loop LangGraph workflow
-
-```text
-interpret -> inspect -> plan -> approve plan -> apply
-          -> validate -> repair? -> compare -> approve result
-```
-
-Add persistence, checkpoints, rollback and traces.
+Autonomous optimization generation and graphical user interfaces are outside the current scope.
